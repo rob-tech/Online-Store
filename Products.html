@@ -11,10 +11,11 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <style>
-    .box {
-        padding: 20px;
-        border: 1px solid pink;
-    }
+.card-img-top {
+    /* width: 100%; */
+    /* height: 10vw; */
+    /* object-fit: cover; */
+}
 </style>
 
 <body>
@@ -23,66 +24,69 @@
     <div class="container">
         <a href="index.html">Back</a>
 
-        <div class="row m-2" id="currentProducts"></div>
+        <div class="row" id="currentProducts"></div>
 
     </div>
 
-
-
-
     <script>
-
+       var products = [];
+       var id = null;
+      
 
         window.onload = async () => {
 
             var urlParams = new URLSearchParams(window.location.search);
-            var id = urlParams.get("id");
-            const url = ` https://cors-anywhere.herokuapp.com/https://strive-school-testing-apis.herokuapp.com/api/product/`;
-            var products = await getProducts(url + id);
+            id = urlParams.get("id");
+            const url = `https://cors-anywhere.herokuapp.com/https://strive-school-testing-apis.herokuapp.com/api/product/`
+            products = await getProducts(url + id);
             // return products
-
+            
             var currentProducts = document.querySelector("#currentProducts");
 
             if (products.length > 0) {
                 currentProducts.innerHTML = products.map(product => `
-               
-                   <div class ="col-sm-3 box">
-                   <a>
-                       <img src = "${product.imageUrl}" width="50%" height="auto" />
-                   </a>
-                   <h6>Name: ${product.name}</h6>
+               <div class="card" style="width: 18rem;">
+              <img src="${product.imageUrl}" class="card-img-top img-fluid" alt="Device Image" width="50%" height="auto" >
+                  <div class="card-body">
+                 <div class="content">
+                   <a href="detailPage.html?id=${product._id}">${product.name}</a>
+                </div>
                    <h6>Brand: ${product.brand}</h6>
                    <h6>Description: ${product.description}</h6>
                    <h5>Price: ${product.price}</h5>   
-                   <button type="button" class="btn btn-sm btn-outline-secondary">Delete</button>           
-                 </div>
-         
-                `).join("");
-               
-             
-                 
-               
-            //      var col = document.querySelector(".container .row .box")
-               
-            //      col.querySelector(".btn").addEventListener("click", (deleteItem) => {
-                    
-            //     console.log("pressed")
-            //     var itemHide = e.target.parentElement;
-            //     itemHide.classList.add("d-none")
-                    
-            // });
-
+                   <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deleteEvent('${product._id}')">Delete</button> 
+                   <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editEvent('${product._id}')">Edit</button> 
+                </div> 
+              </div>
+                `).join("");                              
             }
             else {
-                currentProducts.innerHTML = "<h1>No Products</h1>"
+                currentProducts.innerHTML = "No Products"
             }
-            
 
+        };
+ 
 
+      deleteEvent = async (id) => {
+        let headers = new Headers();
+        headers.set('Authorization', 'Basic ' + 'dXNlcjc6M1VVNWRZRnZlblJ1UlA3RQ==');
+        await fetch(
+          `https://cors-anywhere.herokuapp.com/https://strive-school-testing-apis.herokuapp.com/api/product/${id}`,
+          {
+            method: "DELETE",
+            headers: headers
+          }
+        );
+        location.assign("Products.html");
+      };
 
-        }
+  
+
+  editEvent = (id) => (location.href = "index.html?id=" + id)
 
     </script>
+
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
